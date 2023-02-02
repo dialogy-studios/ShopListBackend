@@ -1,0 +1,6 @@
+const LOGIN_ROUTE_NAME = "/login"
+const CONFIRM_LOGIN_ROUTE_NAME = "/login/confirm"
+const REGISTER_ROUTE_NAME = "/register"
+const CONFIRM_REGISTER_ROUTE_NAME = "/register/confirm"
+
+module.exports = { LOGIN_ROUTE_NAME, CONFIRM_LOGIN_ROUTE_NAME, REGISTER_ROUTE_NAME, CONFIRM_REGISTER_ROUTE_NAME }
