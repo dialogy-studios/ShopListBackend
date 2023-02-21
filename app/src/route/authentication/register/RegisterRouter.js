@@ -28,10 +28,10 @@ router.post(REGISTER_ROUTE_NAME, async (req, res) => {
         )
         await validatePhoneNumber(client, config.userPoolId, phoneNumber)
         const signUpResponse = await signUp(client, config.clientId, username, password, email, name, lastname, phoneNumber)
-        res.status(200).send()
+        res.status(200).send(JSON.stringify("success"))
     } catch (error) {
-        const [status, message] = parseAWSCognitoError(error)
-        res.status(status).send(message)
+        const [status, _, type] = parseAWSCognitoError(error)
+        res.status(status).send(type)
     }
 })
 
@@ -48,10 +48,10 @@ router.post(CONFIRM_REGISTER_ROUTE_NAME, async (req, res) => {
             config.region
         )
         const confirmSignUpResponse = await confirmSignUp(client, config.clientId, username, confirmationCode)
-        res.status(200).send()
+        res.status(200).send(JSON.stringify("success"))
     } catch (error) {
-        const [status, message] = parseAWSCognitoError(error)
-        res.status(status).send(message)
+        const [status, _, type] = parseAWSCognitoError(error)
+        res.status(status).send(type)
     }
 })
 

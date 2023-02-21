@@ -1,0 +1,21 @@
+services:
+  database:
+    image: postgres
+    restart: always
+    ports:
+      - "3030:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: reberth
+      POSTGRES_USER: reberth
+      POSTGRES_DB: ShopList
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:9005"
+    volumes:
+      - .:/home/node/app
+      - ./node_modules:/home/node/app/node_modules

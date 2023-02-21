@@ -25,10 +25,10 @@ router.post(LOGIN_ROUTE_NAME, async (req, res) => {
 
         const response = await signIn(client, username, password, config.clientId)
         LocalStorage.sessions[username] = response[AWS_COGNITO_SESSION_PARAMETER]
-        res.status(200).send()
+        res.status(200).send(JSON.stringify("success"))
     } catch (error) {
-        const [status, message] = parseAWSCognitoError(error)
-        res.status(status).send(message)
+        const [status, _, type] = parseAWSCognitoError(error)
+        res.status(status).send(type)
     }
 })
 
@@ -46,10 +46,11 @@ router.post(CONFIRM_LOGIN_ROUTE_NAME, async (req, res) => {
         )
         const session = LocalStorage.sessions[username]
         const response = await confirmSignIn(client, config.clientId, username, confirmationCode, session)
-        res.sendStatus(200)
+        console.log(response)
+        res.status(200).send(JSON.stringify("success"))
     } catch (error) {
-        const [status, message] = parseAWSCognitoError(error)
-        res.status(status).send(message)
+        const [status, message, type] = parseAWSCognitoError(error)
+        res.status(status).send(type)
     }
 })
 

@@ -3,7 +3,11 @@ const {
     LAST_NAME_BODY_PARAMETER,
     PHONE_NUMBER_BODY_PARAMETER,
     EMAIL_BODY_PARAMETER,
-    PASSWORD_BODY_PARAMETER, SESSION_EXCEPTION_ID, PHONE_NUMBER_CONFLICT
+    PASSWORD_BODY_PARAMETER,
+    SESSION_EXCEPTION_ID,
+    PHONE_NUMBER_CONFLICT,
+    USERNAME_BODY_PARAMETER,
+    CONFIRMATION_CODE_BODY_PARAMETER
 } = require("./constants");
 
 /**
@@ -13,10 +17,11 @@ const {
  * @returns {[string]}
  */
 function parseAWSCognitoError(error) {
-    const mappedExceptions = EXCEPTION_PAYLOAD[error["__type"]]
+    const mappedExceptions = error["__type"] !== undefined ? EXCEPTION_PAYLOAD[error["__type"]] : error
     const status = mappedExceptions["status"] || error["status"] || 500
     const message = mappedExceptions["message"] || error["message"] || "Something Wrong happened!"
-    return [status, message]
+    const type = error["__type"] || error["type"] || ""
+    return [status, message, type]
 }
 
 /**
@@ -27,7 +32,7 @@ function parseAWSCognitoError(error) {
  */
 function generateAWSCognitoError(payload) {
     var error = new Error(payload.message)
-    error["__type"] = payload.type
+    error["type"] = payload.type
     error["status"] = payload.status
     return error
 }
@@ -79,12 +84,6 @@ EXCEPTION_PAYLOAD[SESSION_EXCEPTION_ID] = {
     type: SESSION_EXCEPTION_ID
 }
 
-EXCEPTION_PAYLOAD["UsernameExistsException"] = {
-    status: 409,
-    message: "Username already registered",
-    type: "UsernameExistsException"
-}
-
 EXCEPTION_PAYLOAD["NotAuthorizedException"] = {
     status: 401,
     message: "Not Authorized",
@@ -107,6 +106,12 @@ EXCEPTION_PAYLOAD["ExpiredCodeException"] = {
     status: 401,
     message: "Code expired",
     type: "ExpiredCodeException"
+}
+
+EXCEPTION_PAYLOAD[USERNAME_BODY_PARAMETER] = {
+    status: 406,
+    message: "Username is empty or null",
+    type: "UsernameInvalid"
 }
 
 EXCEPTION_PAYLOAD[NAME_BODY_PARAMETER] = {
@@ -137,6 +142,12 @@ EXCEPTION_PAYLOAD[EMAIL_BODY_PARAMETER] = {
     status: 406,
     message: "Email is empty or null",
     type: "EmailInvalid"
+}
+
+EXCEPTION_PAYLOAD[CONFIRMATION_CODE_BODY_PARAMETER] = {
+    status: 406,
+    message: "Confirmation code is empty or null",
+    type: "ConfirmationCodeInvalid"
 }
 
 EXCEPTION_PAYLOAD[PHONE_NUMBER_CONFLICT] = {
