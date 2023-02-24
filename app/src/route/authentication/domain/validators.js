@@ -1,5 +1,5 @@
 const {AWS_COGNITO_PHONE_NUMBER_PARAMETER, PHONE_NUMBER_CONFLICT} = require("../../../setup/constants");
-const {generateAWSCognitoError, EXCEPTION_PAYLOAD} = require("../../../setup/exceptions");
+const {generateError, EXCEPTION_PAYLOAD} = require("../../../setup/exceptions");
 const {findUserByAttribute} = require("../../../usecase/find_user_by_attribute");
 const {CognitoIdentityProviderClient} = require("@aws-sdk/client-cognito-identity-provider")
 /**
@@ -13,7 +13,7 @@ const {CognitoIdentityProviderClient} = require("@aws-sdk/client-cognito-identit
 async function validatePhoneNumber(client, userPoolId, phoneNumber) {
     const user = await findUserByAttribute(client, AWS_COGNITO_PHONE_NUMBER_PARAMETER, phoneNumber, userPoolId)
     if (user != null && user.Users.length > 0) {
-        throw generateAWSCognitoError(EXCEPTION_PAYLOAD[PHONE_NUMBER_CONFLICT])
+        throw generateError(EXCEPTION_PAYLOAD[PHONE_NUMBER_CONFLICT])
     }
 }
 

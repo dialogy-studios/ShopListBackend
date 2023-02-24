@@ -1,9 +1,9 @@
 const express = require("express")
-const {getClient} = require("../../../setup/get_client");
+const {getClient} = require("../../../setup/get_cognito_client");
 const {signIn} = require("../../../usecase/sign_in");
 const {confirmSignIn} = require("../../../usecase/confirm_sign_in");
 const LocalStorage = require("../../../storage/LocalStorage")
-const {parseAWSCognitoError, validateThenGet} = require("../../../setup/exceptions");
+const {parseError, validateThenGet} = require("../../../setup/exceptions");
 const {PASSWORD_BODY_PARAMETER, USERNAME_BODY_PARAMETER, AWS_COGNITO_SESSION_PARAMETER,
     CONFIRMATION_CODE_BODY_PARAMETER
 } = require("../../../setup/constants");
@@ -27,7 +27,7 @@ router.post(LOGIN_ROUTE_NAME, async (req, res) => {
         LocalStorage.sessions[username] = response[AWS_COGNITO_SESSION_PARAMETER]
         res.status(200).send(JSON.stringify("success"))
     } catch (error) {
-        const [status, _, type] = parseAWSCognitoError(error)
+        const [status, _, type] = parseError(error)
         res.status(status).send(type)
     }
 })
@@ -47,9 +47,9 @@ router.post(CONFIRM_LOGIN_ROUTE_NAME, async (req, res) => {
         const session = LocalStorage.sessions[username]
         const response = await confirmSignIn(client, config.clientId, username, confirmationCode, session)
         console.log(response)
-        res.status(200).send(JSON.stringify("success"))
+        res.status(200).send(JSON.stringify(response['AuthenticationResult']['IdToken']))
     } catch (error) {
-        const [status, message, type] = parseAWSCognitoError(error)
+        const [status, message, type] = parseError(error)
         res.status(status).send(type)
     }
 })

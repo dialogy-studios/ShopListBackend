@@ -10,12 +10,18 @@ services:
       POSTGRES_PASSWORD: reberth
       POSTGRES_USER: reberth
       POSTGRES_DB: ShopList
+    networks:
+      - backend
   api:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "3000:9005"
     volumes:
       - .:/home/node/app
-      - ./node_modules:/home/node/app/node_modules
+    networks:
+      - backend
+networks:
+  backend:
+    driver: bridge

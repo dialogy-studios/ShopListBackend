@@ -1,11 +1,11 @@
 const express = require("express")
-const {getClient} = require("../../../setup/get_client");
+const {getClient} = require("../../../setup/get_cognito_client");
 const {signUp} = require("../../../usecase/sign_up");
 const {confirmSignUp} = require("../../../usecase/confirm_sign_up");
 const { NAME_BODY_PARAMETER, LAST_NAME_BODY_PARAMETER, PHONE_NUMBER_BODY_PARAMETER,
     CONFIRMATION_CODE_BODY_PARAMETER, USERNAME_BODY_PARAMETER, PASSWORD_BODY_PARAMETER, EMAIL_BODY_PARAMETER
 } = require("../../../setup/constants")
-const { parseAWSCognitoError, validateThenGet} = require("../../../setup/exceptions")
+const { parseError, validateThenGet} = require("../../../setup/exceptions")
 const {validatePhoneNumber} = require("../domain/validators");
 const {CONFIRM_REGISTER_ROUTE_NAME, REGISTER_ROUTE_NAME} = require("../../../setup/route_names");
 const router = express.Router()
@@ -30,7 +30,7 @@ router.post(REGISTER_ROUTE_NAME, async (req, res) => {
         const signUpResponse = await signUp(client, config.clientId, username, password, email, name, lastname, phoneNumber)
         res.status(200).send(JSON.stringify("success"))
     } catch (error) {
-        const [status, _, type] = parseAWSCognitoError(error)
+        const [status, _, type] = parseError(error)
         res.status(status).send(type)
     }
 })
@@ -50,7 +50,7 @@ router.post(CONFIRM_REGISTER_ROUTE_NAME, async (req, res) => {
         const confirmSignUpResponse = await confirmSignUp(client, config.clientId, username, confirmationCode)
         res.status(200).send(JSON.stringify("success"))
     } catch (error) {
-        const [status, _, type] = parseAWSCognitoError(error)
+        const [status, _, type] = parseError(error)
         res.status(status).send(type)
     }
 })

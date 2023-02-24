@@ -7,7 +7,9 @@ const {
     SESSION_EXCEPTION_ID,
     PHONE_NUMBER_CONFLICT,
     USERNAME_BODY_PARAMETER,
-    CONFIRMATION_CODE_BODY_PARAMETER
+    CONFIRMATION_CODE_BODY_PARAMETER,
+    PAGE_QUERY_PARAMETER,
+    DEPARTMENT_QUERY_PARAMETER
 } = require("./constants");
 
 /**
@@ -16,7 +18,7 @@ const {
  * @param {Error} error the exception
  * @returns {[string]}
  */
-function parseAWSCognitoError(error) {
+function parseError(error) {
     const mappedExceptions = error["__type"] !== undefined ? EXCEPTION_PAYLOAD[error["__type"]] : error
     const status = mappedExceptions["status"] || error["status"] || 500
     const message = mappedExceptions["message"] || error["message"] || "Something Wrong happened!"
@@ -30,7 +32,7 @@ function parseAWSCognitoError(error) {
  * @param {{status: int, message: string, type: string}} payload
  * @returns {Error}
  */
-function generateAWSCognitoError(payload) {
+function generateError(payload) {
     var error = new Error(payload.message)
     error["type"] = payload.type
     error["status"] = payload.status
@@ -47,7 +49,7 @@ function generateAWSCognitoError(payload) {
 const validate = (value, property) => {
     if (value == null || value === "" || value === undefined) {
         const payload = EXCEPTION_PAYLOAD[property]
-        throw generateAWSCognitoError(payload)
+        throw generateError(payload)
     }
 }
 
@@ -59,7 +61,7 @@ const validate = (value, property) => {
  * @returns {string}
  */
 function validateThenGet(req, property) {
-    const value = req.body[property]
+    const value = req.body[property] ?? req.query[property]
     validate(value, property)
     return value
 }
@@ -120,6 +122,18 @@ EXCEPTION_PAYLOAD[NAME_BODY_PARAMETER] = {
     type: "NameInvalid"
 }
 
+EXCEPTION_PAYLOAD[PAGE_QUERY_PARAMETER] = {
+    status: 406,
+    message: "Page query parameter is empty or null",
+    type: "InvalidPage"
+}
+
+EXCEPTION_PAYLOAD[DEPARTMENT_QUERY_PARAMETER] = {
+    status: 406,
+    message: "Department query parameter is empty or null",
+    type: "DepartmentInvalid"
+}
+
 EXCEPTION_PAYLOAD[LAST_NAME_BODY_PARAMETER] = {
     status: 406,
     message: "Last name is empty or null",
@@ -156,4 +170,4 @@ EXCEPTION_PAYLOAD[PHONE_NUMBER_CONFLICT] = {
     type: PHONE_NUMBER_CONFLICT
 }
 
-module.exports = {EXCEPTION_PAYLOAD, parseAWSCognitoError, validate, validateThenGet, generateAWSCognitoError}
+module.exports = {EXCEPTION_PAYLOAD, parseError, validate, validateThenGet, generateError}
