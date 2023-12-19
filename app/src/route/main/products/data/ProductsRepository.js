@@ -1,17 +1,46 @@
-const {client} = require("../../../../setup/get_pgsql_client")
+const { client } = require("../../../../setup/get_pgsql_client")
 
-const ITEMS_PER_PAGE = 10
 
-async function queryProductsByDepartmentId(psqlClient, departmentId, start, end) {
-    const query = "select * from Products where categoryId = $1 limit $2 offset $3"
-    return await psqlClient.query(query, [departmentId, start, end])
+const queryProductInfo = async (sku) => {
+    const query = `
+    select products.sku, products.name, products.thumbnail
+    from products
+    where products.sku = $1
+    `
+
+    return (await client.query(query, [sku])).rows[0]
 }
 
-async function getProductsByDepartmentId(departmentId, page) {
-    const init = ITEMS_PER_PAGE * page
-    const end = init + ITEMS_PER_PAGE
-    const products = await queryProductsByDepartmentId(client, departmentId, end, init)
-    return products
+const queryProductHistoricPrice = async (sku) => {
+    const query = `
+    select product_price.price, product_price.related_date
+    from product_price
+    where product_price.sku = $1
+    `
+    return (await client.query(query, [sku])).rows
 }
 
-module.exports = { getProductsByDepartmentId }
+
+const getProductDetail = async (sku) => {
+    const info = await getProductInfo(sku)
+    const historicalPrice = await queryProductHistoricPrice(sku)
+
+    return {
+        ...info,
+        historicPrice: historicalPrice
+    }
+}
+
+const getProductInfo = async (sku) => {
+    const productInfo = await queryProductInfo(sku)
+
+    return {
+        info: {
+            id: productInfo.sku,
+            name: productInfo.name,
+            thumb: productInfo.thumbnail
+        },
+    }
+}
+
+module.exports = { getProductDetail, getProductInfo }

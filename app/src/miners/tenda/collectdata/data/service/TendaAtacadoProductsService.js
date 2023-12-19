@@ -10,7 +10,8 @@ class TendaAtacadoProductsService {
             url: endpoint,
             method: "get",
             params: {
-                page
+                page,
+                "order": "relevance"
             }
         });
         return productsData.data;

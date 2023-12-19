@@ -8,6 +8,7 @@ class TendaAtacadoProductsRepository {
     currentPage = 1;
     isLastPage = false;
     async getProductsByCategory(categoryId) {
+        console.log(`category => ${categoryId}, page => ${this.currentPage}`)
         const page = await this.tendaAtacadoProductsService.loadProductsFromCategory(categoryId, this.currentPage);
         const products = (page['products'] || []).map((product) => ({
             ...product,

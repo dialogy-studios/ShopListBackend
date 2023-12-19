@@ -13,6 +13,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
 // Routers
 router.use(authentication)
+router.use(tendaMinerRouter)
 router.use(main)
 // Main Router
 app.use("/", router)
