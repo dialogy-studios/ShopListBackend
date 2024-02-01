@@ -1,6 +1,6 @@
 
 const {CognitoIdentityProviderClient, SignUpCommand, SignUpCommandOutput, AttributeType} = require("@aws-sdk/client-cognito-identity-provider")
-const {AWS_COGNITO_GIVEN_NAME_PARAMETER, AWS_COGNITO_FAMILY_NAME_PARAMETER, AWS_COGNITO_PHONE_NUMBER_PARAMETER} = require("../setup/constants");
+const {AWS_COGNITO_GIVEN_NAME_PARAMETER, AWS_COGNITO_FAMILY_NAME_PARAMETER, AWS_COGNITO_PHONE_NUMBER_PARAMETER, AWS_COGNITO_EMAIL_PARAMETER} = require("../setup/constants");
 /**
  * Sign Up Function
  *
@@ -17,12 +17,13 @@ const {AWS_COGNITO_GIVEN_NAME_PARAMETER, AWS_COGNITO_FAMILY_NAME_PARAMETER, AWS_
 async function signUp(client, clientId, username, pwd, email, name, lastname, phoneNumber) {
     const input = {
         ClientId: clientId,
-        Username: username,
+        Username: phoneNumber,
         Password: pwd,
         UserAttributes: [
             { Name: AWS_COGNITO_GIVEN_NAME_PARAMETER, Value: name },
             { Name: AWS_COGNITO_FAMILY_NAME_PARAMETER, Value: lastname },
-            { Name: AWS_COGNITO_PHONE_NUMBER_PARAMETER, Value: phoneNumber }
+            { Name: AWS_COGNITO_PHONE_NUMBER_PARAMETER, Value: phoneNumber },
+            { Name: AWS_COGNITO_EMAIL_PARAMETER, Value: email }
         ]
     }
     return client.send(new SignUpCommand(input))

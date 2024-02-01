@@ -15,6 +15,7 @@ async function confirmSignUp(client, clientId, username, confirmationCode) {
         Username: username,
         ConfirmationCode: confirmationCode,
     }
+    console.log(input)
     return client.send(new ConfirmSignUpCommand(input))
 }
 

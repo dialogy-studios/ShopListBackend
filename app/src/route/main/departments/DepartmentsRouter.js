@@ -20,7 +20,7 @@ router.get("/department/:departmentId/products", async(req, res) => {
         const departmentId = req.params["departmentId"]
         const page = validateThenGet(req, PAGE_QUERY_PARAMETER)
         const products = await getProductsByDepartmentUseCase(departmentId, page)
-        res.status(200).send(JSON.stringify({ productList: products.map(({sku, name, thumbnail}) => ({id: sku, name, thumb: thumbnail})) }))
+        res.status(200).send(JSON.stringify({ productList: products.map(({sku, name, thumbnail, price}) => ({id: sku, name, thumb: thumbnail, price})) }))
     } catch (error) {
         console.log(error);
         const [status, _, type] = parseError(error)

@@ -3,9 +3,28 @@ const { client } = require("../../../../setup/get_pgsql_client")
 
 const queryProductInfo = async (sku) => {
     const query = `
-    select products.sku, products.name, products.thumbnail
-    from products
-    where products.sku = $1
+    select
+	products.sku,
+	products.name,
+	products.thumbnail,
+    departments_products.department_id::text,
+	(
+	select
+		distinct on
+		("sku") price
+	from
+		product_price
+	where
+		sku = $1
+	order by
+		"sku",
+		"price" desc nulls last) as price
+from
+	products
+inner join departments_products on 
+        departments_products.sku = products.sku
+where
+	products.sku = $1
     `
 
     return (await client.query(query, [sku])).rows[0]
@@ -38,7 +57,9 @@ const getProductInfo = async (sku) => {
         info: {
             id: productInfo.sku,
             name: productInfo.name,
-            thumb: productInfo.thumbnail
+            thumb: productInfo.thumbnail,
+            price: productInfo.price,
+            departmentId: productInfo.department_id
         },
     }
 }

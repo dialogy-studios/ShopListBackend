@@ -20,9 +20,19 @@ const {
  */
 function parseError(error) {
     const mappedExceptions = error["__type"] !== undefined ? EXCEPTION_PAYLOAD[error["__type"]] : error
-    const status = mappedExceptions["status"] || error["status"] || 500
-    const message = mappedExceptions["message"] || error["message"] || "Something Wrong happened!"
-    const type = error["__type"] || error["type"] || ""
+    var status
+    var message
+    var type
+
+    try {
+        status = mappedExceptions["status"] || error["status"]
+        message = mappedExceptions["message"] || error["message"]
+        type = error["__type"] || error["type"]
+    } catch (exception) {
+        status = 500
+        message = "Something Wrong happened!"
+        type = ""
+    }
     return [status, message, type]
 }
 
