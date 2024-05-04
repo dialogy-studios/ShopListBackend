@@ -31,7 +31,7 @@ router.post(REGISTER_ROUTE_NAME, async (req, res) => {
         res.status(200).send(JSON.stringify("success"))
     } catch (error) {
         const [status, _, type] = parseError(error)
-        res.status(status).send(type)
+                res.status(status).send(type)
     }
 })
 

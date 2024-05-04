@@ -2,8 +2,7 @@ const { client } = require("../../../../setup/get_pgsql_client")
 const { USER_ID_MARKET_LIST_TABLE_COLUMN } = require("../../../../setup/constants");
 
 async function queryMarketListByUserid(userId) {
-  // const marketList = await client.query("select * from MarketList where user_id = $1", [userId])
-  const marketList = await client.query("select MarketList.id_list::text as id, MarketList.name_list as name from MarketList")
+  const marketList = await client.query("select MarketList.id_list::text as id, MarketList.name_list as name from MarketList where user_id = $1", [userId])
   return marketList.rows
 }
 

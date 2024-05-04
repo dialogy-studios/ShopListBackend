@@ -5,7 +5,7 @@ const marketListRouter = require("./market_list/MarketListRouter")
 const router = require("express").Router()
 const { tokenValidationRouter } = require("../authentication/middleware/tokenValidation")
 
-// router.use(tokenValidationRouter)
+router.use(tokenValidationRouter)
 router.use(function (req, res, next) {
 
     // Website you wish to allow to connect

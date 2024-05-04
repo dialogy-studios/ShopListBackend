@@ -9,7 +9,7 @@ const app = express()
 const router = express.Router()
 
 // Middlewares
-router.use(bodyParser.urlencoded({ extended: false }));
+// router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
 // Routers
 router.use(authentication)
